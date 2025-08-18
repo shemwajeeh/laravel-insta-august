@@ -1,22 +1,51 @@
-.icon-sm{
+body {
+    background: linear-gradient(
+        135deg,
+        #f7f7f7,
+        #e5e5e5
+    ); /* Default background */
+}
+
+.theme-bg {
+    background: #a2af9b !important;
+    color: white !important;
+}
+
+.brand-text {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    background: linear-gradient(45deg, #A2AF9B, #6b7762);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 1px;
+}
+
+
+.brand-text:hover {
+    color: #8d987f; /* darker shade on hover */
+}
+
+
+.icon-sm {
     font-size: 2rem;
 }
 
-.image-lg{
+.image-lg {
     width: 9rem;
     height: 9rem;
     object-fit: cover;
 }
 
-.fa-heart{
+.fa-heart {
     font-size: 1.5rem;
 }
 
-.xsmall{
+.xsmall {
     font-size: 0.65rem;
 }
 
-.icon-lg{
+.icon-lg {
     font-size: 9rem;
 }
 
@@ -26,23 +55,23 @@
     object-fit: cover;
 }
 
-.avatar-lg{
+.avatar-lg {
     width: 9rem;
     height: 9rem;
     object-fit: cover;
 }
 
-.avatar-sm{
+.avatar-sm {
     width: 2rem;
     height: 2rem;
     object-fit: cover;
 }
 
-.icon-md{
+.icon-md {
     font-size: 3.5rem;
 }
 
-.avatar-md{
+.avatar-md {
     width: 3.5rem;
     height: 3.5rem;
     object-fit: cover;
