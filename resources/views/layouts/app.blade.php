@@ -43,13 +43,19 @@
                         {{-- This will not show up in the admin side --}}
                         @if (!request()->is('admin/*'))
                             <ul class="navbar-nav ms-auto">
-                                <form action="{{ route('search') }}" style="width:300px">
-                                    <input type="search" name="search" class="form-control form-control-sm"
-                                        placeholder="Search...">
+                                <form action="{{ route('search') }}" class="d-flex" style="width: 300px;">
+                                    <div class="input-group input-group-sm">
+                                        <span class="input-group-text bg-white border-end-0">
+                                            <i class="fa-solid fa-magnifying-glass text-muted"></i>
+                                        </span>
+                                        <input type="search" name="search" class="form-control border-start-0 shadow-none"
+                                            placeholder="Search..." aria-label="Search">
+                                    </div>
                                 </form>
                             </ul>
                         @endif
                     @endauth
+
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
@@ -67,16 +73,36 @@
                                 </li>
                             @endif --}}
                         @else
+                            {{-- Search --}}
+                            <li class="nav-item dropdown" title="Search">
+                                <button class="btn shadow-none nav-link" data-bs-toggle="dropdown">
+                                    <i class="fa-solid fa-magnifying-glass icon-sm" style="color: #A2AF9B;"></i>
+                                </button>
+                                <div class="dropdown-menu p-3 shadow border-0 rounded-3"
+                                    style="min-width: 280px; background-color: #FAF9EE;">
+                                    <form action="{{ route('search') }}" method="GET" class="d-flex">
+                                        <input type="search" name="search"
+                                            class="form-control form-control-sm me-2 rounded-pill shadow-sm"
+                                            placeholder="Search..."
+                                            style="flex: 1; border: 1px solid #A2AF9B; background-color: #fff;">
+                                        <button type="submit" class="btn btn-sm rounded-pill px-3"
+                                            style="background-color: #A2AF9B; color: #fff;">
+                                            <i class="fa-solid fa-arrow-right"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </li>
+
+
+
                             {{-- Home --}}
                             <li class="nav-item" title="Home">
-                                <a href="{{ route('index') }}" class="nav-link"><i
-                                        class="fa-solid fa-house text-dark icon-sm"></i></a>
+                                <a href="{{ route('index') }}" class="nav-link"><i class="fa-solid fa-house  icon-sm" style="color: #A2AF9B;"></i></a>
                             </li>
 
                             {{-- Create Post --}}
                             <li class="nav-item" title="Create Post">
-                                <a href="{{ route('post.create') }}" class="nav-link"><i
-                                        class="fa-solid fa-circle-plus text-dark icon-sm"></i></a>
+                                <a href="{{ route('post.create') }}" class="nav-link"><i class="fa-solid fa-circle-plus icon-sm" style="color: #A2AF9B;"></i></a>
                             </li>
 
                             {{-- Account --}}
@@ -84,9 +110,9 @@
                                 <button id="account-dropdown" class="btn shadow-none nav-link" data-bs-toggle="dropdown">
                                     @if (Auth::user()->avatar)
                                         <img src="{{ Auth::user()->avatar }}" alt="{{ Auth::user()->name }}"
-                                            class="rounded-circle avatar-sm">
+                                            class="rounded-circle avatar-sm border border-2" style="border-color:#A2AF9B;">
                                     @else
-                                        <i class="fa-solid fa-circle-user text-dark icon-sm"></i>
+                                        <i class="fa-solid fa-circle-user icon-sm" style="color:#A2AF9B; border:2px solid #A2AF9B; border-radius:50%;"></i>
                                     @endif
                                 </button>
 

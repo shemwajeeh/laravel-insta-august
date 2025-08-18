@@ -78,8 +78,8 @@ Route::group(['middleware' => 'auth'], function(){
     #TRANSLATE
     Route::middleware('auth')->group(function () {
     // 既存の投稿ルートなどがあればこの中にあります
-    Route::get('/posts/{post}/translate', [PostCaptionTranslateController::class, 'show'])
-        ->name('posts.translate');
+    Route::get('/post/{post}/translate', [PostCaptionTranslateController::class, 'show'])
+        ->name('post.translate');
 });
 
 
