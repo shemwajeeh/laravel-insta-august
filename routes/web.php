@@ -16,7 +16,7 @@ Auth::routes();
 
 Route::group(['middleware' => 'auth'], function(){
     Route::get('/', [HomeController::class, 'index'])->name('index');
-    Route::get('/people', [HomeController::class, 'search'])->name('search');
+    Route::get('/people', [HomeController::class, 'search'])->name('search');//shem
 
     Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function(){
         #USERS
