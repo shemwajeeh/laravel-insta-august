@@ -10,6 +10,14 @@
             overflow: hidden;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
             position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .auth-container:hover {
+            transform: scale(1.05);
+            /* zooms the whole container */
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            /* deeper shadow */
         }
 
         .form-wrapper {
@@ -22,7 +30,7 @@
             transform: translateX(-50%);
         }
 
-        .login{
+        .login {
             margin: 40px auto
         }
 
