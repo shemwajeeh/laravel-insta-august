@@ -210,7 +210,7 @@
                                         @if (Auth::user()->id === $comment->user->id)
                                             &middot;
                                             <button type="submit"
-                                                class="border-0 bg-transparent text-danger p-0 xsmall">Delete</button:>
+                                                class="border-0 bg-transparent text-danger p-0 xsmall">Delete</button>
                                         @endif
                                     </form>
                                 </li>
