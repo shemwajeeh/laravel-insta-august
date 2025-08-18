@@ -10,9 +10,19 @@ use App\Http\Controllers\FollowController;
 use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\Admin\PostsController;
 use App\Http\Controllers\Admin\CategoriesController;
+use App\Http\Controllers\PostCaptionTranslateController;
+use App\Http\Controllers\Auth\RegisterController;
 
 
 Auth::routes();
+
+Route::get('/login', function () {
+    return view('auth.auth');
+})->name('login');
+Route::post('/register', [RegisterController::class, 'register'])->name('register');
+Route::get('/register', function () {
+    return redirect('/login');
+});
 
 Route::group(['middleware' => 'auth'], function(){
     Route::get('/', [HomeController::class, 'index'])->name('index');//junya
@@ -63,5 +73,17 @@ Route::group(['middleware' => 'auth'], function(){
     #FOLLOW
     Route::post('/follow/{user_id}/store', [FollowController::class, 'store'])->name('follow.store');
     Route::delete('/follow/{user_id}/destroy', [FollowController::class, 'destroy'])->name('follow.destroy');
+
+
+    #TRANSLATE
+    Route::middleware('auth')->group(function () {
+    // 既存の投稿ルートなどがあればこの中にあります
+    Route::get('/posts/{post}/translate', [PostCaptionTranslateController::class, 'show'])
+        ->name('posts.translate');
+});
+
+
+
+
 
 });
