@@ -114,59 +114,92 @@
                         class="text-decoration-none text-dark fw-bold">{{ $post->user->name }}</a>
                     &nbsp;
                     <p class="d-inline fw-light">{{ $post->description }}</p>
+                    @php
+                        $targets = collect(config('translate.targets')); // code => label
+                        $supported = collect(config('translate.deepl_supported'))
+                            ->map(fn($c) => strtolower($c))
+                            ->flip(); // key 存在チェック用
+
+                        // ラベルでアルファベット順（大文字小文字を無視）
+                        $sorted = $targets->sort(function ($a, $b) {
+                            return strcasecmp($a, $b);
+                        });
+                    @endphp
+
+                    <label for="translate-lang" class="small mb-0 text-muted">Translate to</label>
+                    <select id="translate-lang" class="form-select form-select-sm d-inline-block ms-2" style="width:auto;">
+                        @foreach ($sorted as $code => $label)
+                            @php $ok = $supported->has(strtolower($code)); @endphp
+                            <option value="{{ $code }}" {{ $ok ? '' : 'disabled' }}>
+                                {{ $label }}{{ $ok ? '' : ' (not supported by DeepL)' }}
+                            </option>
+                        @endforeach
+                    </select>
+
+
+                    <button id="btn-translate" class="btn btn-sm btn-outline-primary ms-2">
+                        🌐 Show Translation
+                    </button>
+
+                    <div id="caption-translated" class="mt-2 small text-body" style="display:none;"></div>
+
 
                     {{-- === AI Translate (EN-only): start === --}}
-<p class="mb-2" id="caption-original">{{ $post->description ?? $post->caption }}</p>
+                    {{-- <p class="mb-2" id="caption-original">{{ $post->description ?? $post->caption }}</p>
 
-<div class="mt-2">
-  <div class="d-flex gap-2 align-items-center">
-    <label for="translate-lang" class="small mb-0 text-muted">Translate to</label>
-    <select id="translate-lang" class="form-select form-select-sm" style="width:auto;">
-      <option value="en">English</option>
-      <option value="ja">Japanese</option>
-      <option value="ko">Korean</option>
-      <option value="zh">Chinese</option>
-    </select>
+                    <div class="mt-2">
+                        <div class="d-flex gap-2 align-items-center">
+                            <label for="translate-lang" class="small mb-0 text-muted">Translate to</label>
+                            <select id="translate-lang" class="form-select form-select-sm" style="width:auto;">
+                                <option value="en">English</option>
+                                <option value="ja">Japanese</option>
+                                <option value="ko">Korean</option>
+                                <option value="zh">Chinese</option>
+                            </select>
 
-    <button id="btn-translate" class="btn btn-sm btn-outline-primary">
-      🌐 Show Translation
-    </button>
-  </div>
+                            <button id="btn-translate" class="btn btn-sm btn-outline-primary">
+                                🌐 Show Translation
+                            </button>
+                        </div>
 
-  <div id="caption-translated" class="mt-2 small text-body" style="display:none;"></div>
-</div>
+                        <div id="caption-translated" class="mt-2 small text-body" style="display:none;"></div>
+                    </div>
 
-<script>
-(function () {
-  const btn  = document.getElementById('btn-translate');
-  const langSel = document.getElementById('translate-lang');
-  const box  = document.getElementById('caption-translated');
-  const base = @json(route('post.translate', ['post' => $post->id]));
+                    <script>
+                        (function() {
+                            const btn = document.getElementById('btn-translate');
+                            const langSel = document.getElementById('translate-lang');
+                            const box = document.getElementById('caption-translated');
+                            const base = @json(route('post.translate', ['post' => $post->id], false));
 
-  btn.addEventListener('click', async function () {
-    const url = base + '?lang=' + encodeURIComponent(langSel.value);
+                            btn.addEventListener('click', async function() {
+                                const url = base + '?lang=' + encodeURIComponent(langSel.value);
 
-    btn.disabled = true;
-    const prev = btn.textContent;
-    btn.textContent = 'Translating...';
+                                btn.disabled = true;
+                                const prev = btn.textContent;
+                                btn.textContent = 'Translating...';
 
-    try {
-      const res = await fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' }});
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const data = await res.json();
-      box.style.display = 'block';
-      box.textContent = data.text || '(No translation)';
-    } catch (e) {
-      console.error(e);
-      alert('Translation failed. Please try again later.');
-    } finally {
-      btn.disabled = false;
-      btn.textContent = prev;
-    }
-  });
-})();
-</script>
-{{-- === AI Translate (EN-only): end === --}}
+                                try {
+                                    const res = await fetch(url, {
+                                        headers: {
+                                            'X-Requested-With': 'XMLHttpRequest'
+                                        }
+                                    });
+                                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                                    const data = await res.json();
+                                    box.style.display = 'block';
+                                    box.textContent = data.text || '(No translation)';
+                                } catch (e) {
+                                    console.error(e);
+                                    alert('Translation failed. Please try again later.');
+                                } finally {
+                                    btn.disabled = false;
+                                    btn.textContent = prev;
+                                }
+                            });
+                        })();
+                    </script> --}}
+                    {{-- === AI Translate (EN-only): end === --}}
 
 
 
@@ -221,4 +254,54 @@
             </div>
         </div>
     </div>
+    <script>
+        (function() {
+            const btn = document.getElementById('btn-translate');
+            const langSel = document.getElementById('translate-lang');
+            const box = document.getElementById('caption-translated');
+            const base = @json(route('post.translate', ['post' => $post->id], false)); // 相対URL
+
+            if (!btn || !langSel || !box) return;
+
+            btn.addEventListener('click', async function() {
+                const url = base + '?lang=' + encodeURIComponent(langSel.value);
+
+                btn.disabled = true;
+                const prev = btn.textContent;
+                btn.textContent = 'Translating...';
+
+                try {
+                    const res = await fetch(url, {
+                        credentials: 'same-origin',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+
+                    const raw = await res.text();
+                    let data = {};
+                    try {
+                        data = JSON.parse(raw);
+                    } catch (_) {}
+
+                    if (!res.ok || typeof data.text === 'undefined') {
+                        const msg = (data && data.message) ? data.message : raw.slice(0, 200);
+                        alert('Translation failed: ' + msg + ' (HTTP ' + res.status + ')');
+                        return;
+                    }
+
+                    box.style.display = 'block';
+                    box.textContent = data.text || '(No translation)';
+                } catch (e) {
+                    alert('Translation failed: Network error');
+                    console.error(e);
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = prev;
+                }
+            });
+        })();
+    </script>
+
+
 @endsection
