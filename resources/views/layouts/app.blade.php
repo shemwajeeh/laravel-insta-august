@@ -73,6 +73,13 @@
                                 </li>
                             @endif --}}
                         @else
+                            {{-- find others posts --}}
+                            <li class="nav-item" title="Explore">
+                                <a href="{{ route('explore') }}" class="nav-link">
+                                    <i class="fa-solid fa-globe icon-sm" style="color:#A2AF9B;"></i>
+                                </a>
+                            </li>
+                            
                             {{-- Search --}}
                             <li class="nav-item dropdown" title="Search">
                                 <button class="btn shadow-none nav-link" data-bs-toggle="dropdown">
@@ -95,12 +102,14 @@
 
                             {{-- Home --}}
                             <li class="nav-item" title="Home">
-                                <a href="{{ route('index') }}" class="nav-link"><i class="fa-solid fa-house  icon-sm" style="color: #A2AF9B;"></i></a>
+                                <a href="{{ route('index') }}" class="nav-link"><i class="fa-solid fa-house  icon-sm"
+                                        style="color: #A2AF9B;"></i></a>
                             </li>
 
                             {{-- Create Post --}}
                             <li class="nav-item" title="Create Post">
-                                <a href="{{ route('post.create') }}" class="nav-link"><i class="fa-solid fa-circle-plus icon-sm" style="color: #A2AF9B;"></i></a>
+                                <a href="{{ route('post.create') }}" class="nav-link"><i
+                                        class="fa-solid fa-circle-plus icon-sm" style="color: #A2AF9B;"></i></a>
                             </li>
 
                             {{-- Account --}}
@@ -110,7 +119,8 @@
                                         <img src="{{ Auth::user()->avatar }}" alt="{{ Auth::user()->name }}"
                                             class="rounded-circle avatar-sm border border-2" style="border-color:#A2AF9B;">
                                     @else
-                                        <i class="fa-solid fa-circle-user icon-sm" style="color:#A2AF9B; border:2px solid #A2AF9B; border-radius:50%;"></i>
+                                        <i class="fa-solid fa-circle-user icon-sm"
+                                            style="color:#A2AF9B; border:2px solid #A2AF9B; border-radius:50%;"></i>
                                     @endif
                                 </button>
 

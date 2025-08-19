@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\PostsController;
 use App\Http\Controllers\Admin\CategoriesController;
 use App\Http\Controllers\PostCaptionTranslateController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ExploreController;
 
 
 Auth::routes();
@@ -27,6 +28,8 @@ Route::get('/register', function () {
 Route::group(['middleware' => 'auth'], function(){
     Route::get('/', [HomeController::class, 'index'])->name('index');//junya
     Route::get('/people', [HomeController::class, 'search'])->name('search');//shem
+
+    Route::get('/explore', [ExploreController::class, 'index'])->name('explore');
 
     Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function(){
         #USERS
