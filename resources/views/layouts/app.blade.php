@@ -41,7 +41,7 @@
                     {{-- [SOON] Add Search Bar Here --}}
                     @auth
                         {{-- This will not show up in the admin side --}}
-                        @if (!request()->is('admin/*'))
+                        {{-- @if (!request()->is('admin/*'))
                             <ul class="navbar-nav ms-auto">
                                 <form action="{{ route('search') }}" class="d-flex" style="width: 300px;">
                                     <div class="input-group input-group-sm">
@@ -53,7 +53,7 @@
                                     </div>
                                 </form>
                             </ul>
-                        @endif
+                        @endif --}}
                     @endauth
 
 
@@ -92,8 +92,6 @@
                                     </form>
                                 </div>
                             </li>
-
-
 
                             {{-- Home --}}
                             <li class="nav-item" title="Home">
