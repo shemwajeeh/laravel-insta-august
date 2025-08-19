@@ -9,7 +9,8 @@
     {{-- heart button + no. of likes + categories --}}
     <div class="d-flex align-items-center justify-content-between mb-2">
         <div class="d-flex align-items-center">
-            @if ($post->isLiked())
+            @livewire('like-button', ['post' => $post], key('post-' . $post->id))
+            {{-- @if ($post->isLiked())
                 <form action="{{ route('like.destroy', $post->id) }}" method="post" class="me-2">
                     @csrf
                     @method('DELETE')
@@ -24,8 +25,8 @@
                         <i class="fa-regular fa-heart fs-5"></i>
                     </button>
                 </form>
-            @endif
-            <span class="fw-semibold small">{{ $post->likes->count() }} likes</span>
+            @endif --}}
+            {{-- <span class="fw-semibold small">{{ $post->likes->count() }} likes</span> --}}
         </div>
 
         <div>
