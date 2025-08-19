@@ -57,7 +57,7 @@
                 <h2 class="fw-bold" style="color:#6b705c;">Share Photos</h2>
                 <p class="text-muted">When you share photos, they'll appear on your profile</p>
                 <a href="{{ route('post.create') }}" 
-                   class="btn btn-outline-success rounded-pill px-4" 
+                   class="btn btn-outline-light rounded-pill px-4" 
                    style="border-color:#A2AF9B; color:#A2AF9B;">
                    Share your first photo
                 </a>

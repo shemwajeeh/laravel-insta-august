@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
 
 class RegisterController extends Controller
 {
@@ -62,11 +63,26 @@ class RegisterController extends Controller
      * @return \App\Models\User
      */
     protected function create(array $data)
-    {
-        return User::create([
+    {   
+        //this line saves a user to the database
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
+
+        //The information inside the array will be used in the email body
+        $details = [
+            'name' => $user->name,
+            'app_url' => config('app.url')
+        ];
+
+        //send an email to the user
+        Mail::send('users.emails.welcome', $details, function($message) use ($user){
+            $message->from(config('mail.from.address'), config('app.name'))
+                    ->to($user->email, $user->name)
+                    ->subject('Welcome to Insta App!');
+        });
+        return $user;
     }
 }
