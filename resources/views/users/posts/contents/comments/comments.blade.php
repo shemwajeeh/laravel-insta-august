@@ -39,7 +39,7 @@
         <div class="input-group">
             <textarea name="comment_body{{ $post->id }}" rows="1" class="form-control form-control-sm"
                 placeholder="Add a comment...">{{ old('comment_body' . $post->id) }}</textarea>
-            <button type="submit" class="btn btn-outline-secondary btn-sm">Post</button>
+            <button type="submit" class="btn btn-outline-light btn-sm" style="border-color:#A2AF9B; color:#A2AF9B;">Post</button>
         </div>
         {{-- Error --}}
         @error('comment_body' . $post->id)
