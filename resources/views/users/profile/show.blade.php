@@ -46,7 +46,7 @@
             position: relative;
             overflow: hidden;
             border-radius: 10px;
-            transition: all 0.3s ease-in-out;
+            /* transition: all 0.3s ease-in-out; */
         }
 
         .post-card img {
