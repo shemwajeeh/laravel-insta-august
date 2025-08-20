@@ -32,4 +32,10 @@ class Post extends Model
     public function isLiked() {
         return $this->likes()->where('user_id', Auth::user()->id)->exists();
     }
+
+    // for explore 
+    public function categories()
+    {
+        return $this->belongsToMany(\App\Models\Category::class, 'category_post', 'post_id', 'category_id');
+    }
 }
