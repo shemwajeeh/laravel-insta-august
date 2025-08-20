@@ -12,24 +12,22 @@ body {
 }
 
 .brand-text {
-    font-family: 'Poppins', sans-serif;
+    font-family: "Poppins", sans-serif;
     font-size: 1.6rem;
     font-weight: 700;
-    background: linear-gradient(45deg, #A2AF9B, #6b7762);
+    background: linear-gradient(45deg, #a2af9b, #6b7762);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     letter-spacing: 1px;
 }
 
-
 .brand-text:hover {
     color: #8d987f; /* darker shade on hover */
 }
 
-
 .icon-sm {
     font-size: 2rem;
-    color: #A2AF9B;
+    color: #a2af9b;
 }
 
 .image-lg {
@@ -50,11 +48,13 @@ body {
     font-size: 9rem;
 }
 
-.grid-img {
+/* .grid-img {
     width: 100%;
     height: 300px;
     object-fit: cover;
-}
+    border-radius: 0.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+} */
 
 .avatar-lg {
     width: 9rem;

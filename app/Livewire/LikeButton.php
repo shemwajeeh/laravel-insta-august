@@ -11,7 +11,6 @@ class LikeButton extends Component
     public $post;
     public $isLiked = false;
     public $likesCount = 0;
-    public $likesDisplay = '';
     public $showLikesModal = false;
     public $likedUsers = [];
 
@@ -21,14 +20,14 @@ class LikeButton extends Component
         $this->refreshLikeState();
     }
 
-    public function showLikes()
+    public function showLikes($postId)
     {
-        $this->likedUsers = $this->post->likes()
+        $this->likedUsers = Like::where('post_id', $postId)
             ->join('users', 'likes.user_id', '=', 'users.id')
-            ->pluck('user.name')
+            ->pluck('users.name')
             ->toArray();
 
-        $this->showLikesModal = true;
+        $this->dispatch('openLikesModal', postId: $postId);
     }
 
 
@@ -50,22 +49,11 @@ class LikeButton extends Component
 
     private function refreshLikeState()
     {
-        // Reload likes with users
         $likes = $this->post->likes()->with('user')->get();
-        $likedUsers = $likes->pluck('user.name');
 
         $this->isLiked = $likes->where('user_id', Auth::id())->isNotEmpty();
         $this->likesCount = $likes->count();
-
-        // Build display string
-        if ($this->likesCount === 0) {
-            $this->likesDisplay = '';
-        } elseif ($this->likesCount === 1) {
-            $this->likesDisplay = "Liked by {$likedUsers[0]}";
-        } else {
-            $othersCount = $this->likesCount - 1;
-            $this->likesDisplay = "Liked by {$likedUsers[0]} and <a href='#' wire:click='showLikes' class='fw-semibold text-decoration-none text-dark'>{$othersCount} others</a>";
-        }
+        $this->likedUsers = $likes->pluck('user.name')->toArray();
     }
 
     public function render()

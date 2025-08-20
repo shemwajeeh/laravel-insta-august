@@ -3,9 +3,53 @@
 @section('title', $user->name)
 
 @section('content')
+    <style>
+        body {
+            background-color: #FAF9EE;
+        }
+
+        .edit-profile-card {
+            background: #fff;
+            border-radius: 1rem;
+            padding: 2rem 3rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .avatar-lg {
+            width: 120px;
+            height: 120px;
+            border: 4px solid #A2AF9B;
+            object-fit: cover;
+        }
+
+        .btn-warning {
+            background-color: #A2AF9B !important;
+            border: none !important;
+            color: #fff !important;
+        }
+
+        .btn-warning:hover {
+            background-color: #7D8A6F !important;
+        }
+
+        label {
+            color: #2C2C2C;
+        }
+
+        input, textarea {
+            border-radius: 0.5rem !important;
+            border: 1px solid #ccc;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #A2AF9B !important;
+            box-shadow: 0 0 0 0.2rem rgba(162, 175, 155, 0.25) !important;
+        }
+    </style>
+
     <div class="row justify-content-center">
         <div class="col-8">
-            <form action="{{ route('profile.update') }}" method="post" class="bg-white shadow rounded-3 p-5" enctype="multipart/form-data">
+            <form action="{{ route('profile.update') }}" method="post" class="edit-profile-card" enctype="multipart/form-data">
                 @csrf
                 @method('PATCH')
 
@@ -37,7 +81,6 @@
                     <label for="name" class="form-label fw-bold">Name</label>
                     <input type="text" name="name" id="name" class="form-control"
                         value="{{ old('name', $user->name) }}" autofocus>
-                    {{-- Error --}}
                     @error('name')
                         <p class="text-danger small">{{ $message }}</p>
                     @enderror
@@ -46,7 +89,6 @@
                     <label for="email" class="form-label fw-bold">E-Mail Address</label>
                     <input type="email" name="email" id="email" class="form-control"
                         value="{{ old('email', $user->email) }}" autofocus>
-                    {{-- Error --}}
                     @error('email')
                         <p class="text-danger small">{{ $message }}</p>
                     @enderror
@@ -54,7 +96,6 @@
                 <div class="mb-3">
                     <label for="introduction" class="form-label fw-bold">Introduction</label>
                     <textarea name="introduction" id="introduction" rows="5" class="form-control" placeholder="Describe yourself">{{ old('introduction', $user->introduction) }}</textarea>
-                    {{-- Error --}}
                     @error('introduction')
                         <p class="text-danger small">{{ $message }}</p>
                     @enderror
