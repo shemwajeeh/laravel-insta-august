@@ -9,52 +9,49 @@ use App\Models\Like;
 class LikeButton extends Component
 {
     public $post;
-    public $isLiked = false;
-    public $likesCount = 0;
-    public $showLikesModal = false;
+    public $isLiked;
+    public $likesCount;
     public $likedUsers = [];
+    public $showModal = false;
 
     public function mount($post)
     {
         $this->post = $post;
-        $this->refreshLikeState();
+        $this->isLiked = $post->isLiked();
+        $this->likesCount = $post->likes->count();
+        $this->likedUsers = $post->likes()->with('user')->get()->pluck('user.name')->toArray();
     }
-
-    public function showLikes($postId)
-    {
-        $this->likedUsers = Like::where('post_id', $postId)
-            ->join('users', 'likes.user_id', '=', 'users.id')
-            ->pluck('users.name')
-            ->toArray();
-
-        $this->dispatch('openLikesModal', postId: $postId);
-    }
-
 
     public function toggleLike()
     {
         if ($this->isLiked) {
-            Like::where('user_id', Auth::id())
-                ->where('post_id', $this->post->id)
-                ->delete();
+            $this->post->likes()->where('user_id', auth()->id())->delete();
+            $this->isLiked = false;
+            $this->likesCount--;
         } else {
-            Like::create([
-                'user_id' => Auth::id(),
-                'post_id' => $this->post->id,
-            ]);
+            $this->post->likes()->create(['user_id' => auth()->id()]);
+            $this->isLiked = true;
+            $this->likesCount++;
         }
 
-        $this->refreshLikeState();
+
+        $this->likedUsers = $this->post->likes()->with('user')->get()->pluck('user.name')->toArray();
     }
 
-    private function refreshLikeState()
+    // private function refreshLikeState()
+    // {
+    //     $likes = $this->post->likes()->with('user')->get();
+
+    //     $this->isLiked = $likes->where('user_id', Auth::id())->isNotEmpty();
+    //     $this->likesCount = $likes->count();
+    //     $this->likedUsers = $likes->pluck('user.name')->toArray();
+    // }
+
+    public function toggleModal()
     {
-        $likes = $this->post->likes()->with('user')->get();
-
-        $this->isLiked = $likes->where('user_id', Auth::id())->isNotEmpty();
-        $this->likesCount = $likes->count();
-        $this->likedUsers = $likes->pluck('user.name')->toArray();
+        $this->showModal = !$this->showModal;
     }
+
 
     public function render()
     {
