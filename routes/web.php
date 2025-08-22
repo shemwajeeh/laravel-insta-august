@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\CategoriesController;
 use App\Http\Controllers\PostCaptionTranslateController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ExploreController;
+use App\Http\Controllers\AvatarController;
 
 
 Auth::routes();
@@ -25,13 +26,13 @@ Route::get('/register', function () {
     return redirect('/login');
 });
 
-Route::group(['middleware' => 'auth'], function(){
-    Route::get('/', [HomeController::class, 'index'])->name('index');//junya
-    Route::get('/people', [HomeController::class, 'search'])->name('search');//shem
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('/', [HomeController::class, 'index'])->name('index'); //junya
+    Route::get('/people', [HomeController::class, 'search'])->name('search'); //shem
 
     Route::get('/explore', [ExploreController::class, 'index'])->name('explore');
 
-    Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function(){
+    Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'admin'], function () {
         #USERS
         Route::get('/users', [UsersController::class, 'index'])->name('users');
         Route::delete('/users/{id}/deactivate', [UsersController::class, 'deactivate'])->name('users.deactivate');
@@ -80,13 +81,15 @@ Route::group(['middleware' => 'auth'], function(){
 
     #TRANSLATE
     Route::middleware('auth')->group(function () {
-    // 既存の投稿ルートなどがあればこの中にあります
-    Route::get('/post/{post}/translate', [PostCaptionTranslateController::class, 'show'])
-        ->name('post.translate');
-});
+        // 既存の投稿ルートなどがあればこの中にあります
+        Route::get('/post/{post}/translate', [PostCaptionTranslateController::class, 'show'])
+            ->name('post.translate');
+    });
 
 
 
-
-
+    Route::middleware('auth')->group(function () {
+        Route::get('/avatar', [AvatarController::class, 'edit'])->name('avatar.edit');
+        Route::post('/avatar', [AvatarController::class, 'store'])->name('avatar.store');
+    });
 });

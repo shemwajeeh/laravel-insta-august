@@ -57,11 +57,10 @@
             100% { background-position: -100% 0 }
         }
 
-        /* 追加: セレクトは幅100%でハミ出し防止、ボタンは細め */
+        /* セレクトは幅100%でハミ出し防止 */
         #translate-lang { max-width: 100%; width: 100%; }
-        .btn-thin.btn-sm { padding: .2rem .5rem; line-height: 1.2; }
 
-        /* 追加: 訳文は折り返し＆改行維持でハミ出し防止 */
+        /* 訳文は折り返し＆改行維持でハミ出し防止 */
         #caption-translated {
             white-space: pre-wrap;
             word-break: break-word;
@@ -169,7 +168,7 @@
                     &nbsp;
                     <p class="d-inline fw-light">{{ $post->description }}</p>
 
-                    {{-- === AI Translate UI (single set, 縦並びに変更) === --}}
+                    {{-- === AI Translate UI (single set, セレクト変更で自動翻訳) === --}}
                     @php
                         // Labels in A→Z order (fallback if config/translate.php doesn't exist)
                         $targets = collect(
@@ -197,7 +196,6 @@
                     @endphp
 
                     <div class="mt-3">
-                        {{-- 横並びをやめて縦積みに変更 --}}
                         <label for="translate-lang" class="small mb-1 text-muted">Translate to</label>
                         <select id="translate-lang" class="form-select form-select-sm w-100">
                             @foreach($sorted as $code => $label)
@@ -207,11 +205,6 @@
                                 </option>
                             @endforeach
                         </select>
-
-                        {{-- 細めのボタンをセレクトの下に配置 --}}
-                        <button id="btn-translate" class="btn btn-outline-primary btn-sm btn-thin mt-2">
-                            🌐 Translate
-                        </button>
 
                         <!-- Glass card: translation result -->
                         <div id="ai-translate-box" class="ai-card p-3 mt-2">
@@ -279,7 +272,6 @@
 
     <script>
     (function () {
-      const btn   = document.getElementById('btn-translate');
       const sel   = document.getElementById('translate-lang');
       const box   = document.getElementById('ai-translate-box');
       const out   = document.getElementById('caption-translated');
@@ -287,45 +279,19 @@
       const cache = document.getElementById('ai-cache');
       const base  = @json(route('post.translate', ['post'=>$post->id], false)); // relative URL (important)
 
-      if (!btn || !sel || !box || !out) return;
+      if (!sel || !box || !out) return;
 
-      // Restore last selected language
+      // Restore last selected language (if available)
       const last = localStorage.getItem('translate:lang');
       if (last) {
         const opt = [...sel.options].find(o => o.value.toLowerCase() === last.toLowerCase() && !o.disabled);
         if (opt) sel.value = opt.value;
       }
 
-      // Copy
-      document.getElementById('ai-copy').onclick = () => {
-        navigator.clipboard.writeText(out.textContent || '');
-      };
-
-      // Speak (Web Speech API)
-      document.getElementById('ai-speak').onclick = () => {
-        const u = new SpeechSynthesisUtterance(out.textContent || '');
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(u);
-      };
-
-      // Typewriter
-      function typeOut(el, text){
-        el.textContent = '';
-        let i = 0;
-        (function step(){
-          el.textContent += text.charAt(i++);
-          if (i <= text.length) requestAnimationFrame(step);
-        })();
-      }
-
-      btn.addEventListener('click', async function () {
-        const lang = sel.value;
+      // Helper: do translate
+      async function doTranslate(lang){
+        // Save selection
         localStorage.setItem('translate:lang', lang);
-
-        const url = base + '?lang=' + encodeURIComponent(lang);
-        btn.disabled = true;
-        const prev = btn.textContent;
-        btn.textContent = 'Translating...';
 
         // Effects ON
         box.classList.add('ai-glow');
@@ -333,6 +299,7 @@
         out.textContent = ' ';
 
         try {
+          const url = base + '?lang=' + encodeURIComponent(lang);
           const res = await fetch(url, {
             credentials: 'same-origin',
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -354,16 +321,45 @@
           cache.style.display = data.cached ? 'inline-block' : 'none';
 
           out.classList.remove('shimmer');
-          typeOut(out, data.text || '(No translation)');
+          // Typewriter
+          out.textContent = '';
+          let i = 0, text = data.text || '(No translation)';
+          (function step(){
+            out.textContent += text.charAt(i++);
+            if (i <= text.length) requestAnimationFrame(step);
+          })();
+
         } catch (e) {
           alert('Translation failed: Network error');
           console.error(e);
         } finally {
-          btn.disabled = false;
-          btn.textContent = prev;
           box.classList.remove('ai-glow');
         }
+      }
+
+      // Debounce to avoid spamming API on fast scrolling
+      let timer = null;
+      sel.addEventListener('change', function(){
+        clearTimeout(timer);
+        const lang = sel.value;
+        timer = setTimeout(() => doTranslate(lang), 250);
       });
+
+      // Auto-translate once on load (using current selection)
+      // ※ 直前セッションの言語が復元された場合はその言語で即時翻訳
+      doTranslate(sel.value);
+
+      // Copy
+      document.getElementById('ai-copy').onclick = () => {
+        navigator.clipboard.writeText(out.textContent || '');
+      };
+
+      // Speak (Web Speech API)
+      document.getElementById('ai-speak').onclick = () => {
+        const u = new SpeechSynthesisUtterance(out.textContent || '');
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(u);
+      };
     })();
     </script>
 @endsection
